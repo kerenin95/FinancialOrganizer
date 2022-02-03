@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "622990469326",
+    "project_id": "financialorganizer-cb8a8",
+    "storage_bucket": "financialorganizer-cb8a8.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:622990469326:android:70b092482517dcd0ae089f",
+        "android_client_info": {
+          "package_name": "com.example.financialorganizer"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "622990469326-pe6qpid7476if3c9538co9dkjf163759.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.financialorganizer",
+            "certificate_hash": "f82ff68d06c3c74f9dc7c20130a887e2c3ad3ca9"
+          }
+        },
+        {
+          "client_id": "622990469326-f295poiipackos48hp1b258a4hinc5c5.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDWxq2DWCZ3ES6mRFiTparyKH8g5ClusV4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "622990469326-f295poiipackos48hp1b258a4hinc5c5.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

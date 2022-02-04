@@ -1,5 +1,6 @@
 package com.example.financialorganizer;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -14,10 +15,16 @@ import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+
+import org.joda.time.DateTime;
+import org.joda.time.Months;
+import org.joda.time.MutableDateTime;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -88,10 +95,32 @@ public class Budget extends AppCompatActivity {
                     String date = dateFormat.format(cal.getTime());
 
                     MutableDateTime epoch = new MutableDateTime();
-                    epop
+                    epoch.setDate(0);
+                    DateTime now = new DateTime();
+                    Months months = Months.monthsBetween(epoch, now);
+
+                    Data data = new Data(budgetItem, date, id, null, Integer.parseInt(budgetAmount), months.getMonths());
+                    budgetRef.child(id).setValue(data).addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if(task.isSuccessful()){
+                                Toast.makeText(Budget.this, "Budget item added", Toast.LENGTH_SHORT).show();
+                            } else {
+                                Toast.makeText(Budget.this, task.getException().toString(), Toast.LENGTH_SHORT).show();
+                            }
+
+                            loader.dismiss();
+                        }
+                    });
                 }
+                dialog.dismiss();
+            }
+        });
 
-
+        cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+               dialog.dismiss();
             }
         });
 

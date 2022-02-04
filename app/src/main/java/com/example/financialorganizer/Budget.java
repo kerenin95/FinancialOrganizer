@@ -3,18 +3,25 @@ package com.example.financialorganizer;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.firebase.ui.database.FirebaseRecyclerAdapter;
+import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -32,6 +39,9 @@ import java.util.Calendar;
 
 public class Budget extends AppCompatActivity {
 
+    private TextView totalBudgetView;
+    private RecyclerView recyclerView;
+
     private FloatingActionButton fab;
 
     private DatabaseReference budgetRef;
@@ -46,6 +56,15 @@ public class Budget extends AppCompatActivity {
         fAuth = FirebaseAuth.getInstance();
         budgetRef = FirebaseDatabase.getInstance().getReference().child("budget").child(fAuth.getCurrentUser().getUid());
         loader = new ProgressDialog(this);
+
+        totalBudgetView = findViewById(R.id.totalBudgetView);
+        recyclerView = findViewById(R.id.recyclerView);
+
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+        linearLayoutManager.setStackFromEnd(true);
+        linearLayoutManager.setReverseLayout(true);
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setLayoutManager(linearLayoutManager);
 
         fab = findViewById(R.id.fab);
 
@@ -125,5 +144,83 @@ public class Budget extends AppCompatActivity {
         });
 
         dialog.show();
+    }
+
+    @Override
+    protected void onStart(){
+        super.onStart();
+
+        FirebaseRecyclerOptions<Data> options = new FirebaseRecyclerOptions.Builder<Data>()
+                .setQuery(budgetRef, Data.class)
+                .build();
+
+        FirebaseRecyclerAdapter<Data, MyViewHolder> adapter = new FirebaseRecyclerAdapter<Data, MyViewHolder>(){
+            @Override
+            protected void onBindViewHolder(@NonNull MyViewHolder holder, int position, @NonNull Data model) {
+                holder.setItemAmount("Allocated amount: $" + model.getAmount());
+                holder.setDate("On: " + model.getDate());
+                holder.setItemName("BudgetItem: "+ model.getItem());
+
+                holder.notes.setVisibility(View.GONE);
+
+                switch (model.getItem()){
+                    case "Transportation":
+                        holder.imageView.setImageResource(R.drawable.budget);
+                        break;
+                    case "Food":
+                        holder.imageView.setImageResource(R.drawable.budget);
+                        break;
+                    case "House/Rent":
+                        holder.imageView.setImageResource(R.drawable.budget);
+                        break;
+                    case "Entertainment":
+                        holder.imageView.setImageResource(R.drawable.budget);
+                        break;
+                    case "Health":
+                        holder.imageView.setImageResource(R.drawable.budget);
+                        break;
+                    case "Other":
+                        holder.imageView.setImageResource(R.drawable.budget);
+                        break;
+                }
+            }
+
+            @NonNull
+            @Override
+            public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+                View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.get_layout, parent, false);
+                return new MyViewHolder(view);
+            }
+        };
+
+        recyclerView.setAdapter(adapter);
+        adapter.startListening();
+        adapter.notifyDataSetChanged();
+    }
+
+    public class MyViewHolder extends RecyclerView.ViewHolder{
+        View mView;
+        public ImageView imageView;
+        public TextView notes;
+
+        public MyViewHolder(@NonNull View itemView) {
+            super(itemView);
+            mView = itemView;
+            imageView = itemView.findViewById(R.id.linearLayout);
+            notes = itemView.findViewById(R.id.note);
+        }
+
+        public void setItemName(String itemName){
+            TextView item = mView.findViewById(R.id.item);
+        }
+
+        public void setItemAmount(String itemAmount){
+            TextView amount = mView.findViewById(R.id.amount);
+            amount.setText(itemAmount);
+        }
+
+        public void setDate(String itemDate){
+            TextView date = mView.findViewById(R.id.date);
+        }
     }
 }

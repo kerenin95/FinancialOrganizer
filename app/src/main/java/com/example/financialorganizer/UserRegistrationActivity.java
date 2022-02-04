@@ -48,39 +48,30 @@ public class UserRegistrationActivity extends AppCompatActivity {
             }
         });
 
-        hasAccount.setOnClickListener(new View.OnClickListener() {
+        registrationBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 String emailInput = email.getText().toString();
                 String passwordInput = password.getText().toString();
 
-                if (TextUtils.isEmpty(emailInput)){
-                    email.setError("Email is required");
-                }
-                if (TextUtils.isEmpty(passwordInput)){
-                    password.setError("Password is required");
-                }
-                else {
 
-                    progressDialog.setMessage("registration in progress");
-                    progressDialog.setCanceledOnTouchOutside(false);
-                    progressDialog.show();
+                progressDialog.setMessage("registering");
+                progressDialog.setCanceledOnTouchOutside(false);
+                progressDialog.show();
 
-                    fAuth.createUserWithEmailAndPassword(emailInput, passwordInput).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                        @Override
-                        public void onComplete(@NonNull Task<AuthResult> task) {
-                            if (task.isSuccessful()){
-                                Intent intent = new Intent(UserRegistrationActivity.this, MainActivity.class);
-                                startActivity(intent);
-                                finish();
-                                progressDialog.dismiss();
-                            }else {
-                                Toast.makeText(UserRegistrationActivity.this, task.getException().toString(), Toast.LENGTH_SHORT).show();
-                                progressDialog.dismiss();
-                            }
+                fAuth.createUserWithEmailAndPassword(emailInput, passwordInput).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            Intent intent = new Intent(UserRegistrationActivity.this, LoginActivity.class);
+                            startActivity(intent);
+                            finish();
+                        } else {
+                            Toast.makeText(UserRegistrationActivity.this, task.getException().toString(), Toast.LENGTH_SHORT).show();
                         }
-                    });
-                }
+                        progressDialog.dismiss();
+                    }
+                });
             }
         });
     }

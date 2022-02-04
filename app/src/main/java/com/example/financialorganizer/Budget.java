@@ -154,7 +154,7 @@ public class Budget extends AppCompatActivity {
                 .setQuery(budgetRef, Data.class)
                 .build();
 
-        FirebaseRecyclerAdapter<Data, MyViewHolder> adapter = new FirebaseRecyclerAdapter<Data, MyViewHolder>(){
+        FirebaseRecyclerAdapter<Data, MyViewHolder> adapter = new FirebaseRecyclerAdapter<Data, MyViewHolder>(options){
             @Override
             protected void onBindViewHolder(@NonNull MyViewHolder holder, int position, @NonNull Data model) {
                 holder.setItemAmount("Allocated amount: $" + model.getAmount());
@@ -206,7 +206,7 @@ public class Budget extends AppCompatActivity {
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
             mView = itemView;
-            imageView = itemView.findViewById(R.id.linearLayout);
+            imageView = itemView.findViewById(R.id.imageView);
             notes = itemView.findViewById(R.id.note);
         }
 

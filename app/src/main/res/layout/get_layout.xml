@@ -65,7 +65,7 @@
             android:layout_marginEnd="10dp"
             android:layout_marginBottom="10dp"
             android:layout_toEndOf="@+id/linearLayout"
-            android:src="@drawable/mainlogo" />
+            android:src="@drawable/mainlogo"/>
 
     </RelativeLayout>
 

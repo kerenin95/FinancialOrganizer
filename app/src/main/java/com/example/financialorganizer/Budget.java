@@ -6,8 +6,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.os.Bundle;
+import android.text.Layout;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -50,6 +52,10 @@ public class Budget extends AppCompatActivity {
     private DatabaseReference budgetRef;
     private FirebaseAuth fAuth;
     private ProgressDialog loader;
+
+    private String post_key = "";
+    private String item = "";
+    private int amount = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -178,10 +184,10 @@ public class Budget extends AppCompatActivity {
 
         FirebaseRecyclerAdapter<Data, MyViewHolder> adapter = new FirebaseRecyclerAdapter<Data, MyViewHolder>(options){
             @Override
-            protected void onBindViewHolder(@NonNull MyViewHolder holder, int position, @NonNull Data model) {
+            protected void onBindViewHolder(@NonNull MyViewHolder holder, @SuppressLint("RecyclerView") final int position, @NonNull final Data model) {
                 holder.setItemAmount("Allocated amount: $" + model.getAmount());
                 holder.setDate("On: " + model.getDate());
-                holder.setItemName("BudgetItem: "+ model.getItem());
+                holder.setItemName("BudgetItem: " + model.getItem());
 
                 holder.notes.setVisibility(View.GONE);
 
@@ -205,6 +211,16 @@ public class Budget extends AppCompatActivity {
                         holder.imageView.setImageResource(R.drawable.budget);
                         break;
                 }
+
+                holder.mView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        post_key = getRef(position).getKey();
+                        item = model.getItem();
+                        amount = model.getAmount();
+                        updateData();
+                    }
+                });
             }
 
             @NonNull
@@ -223,17 +239,20 @@ public class Budget extends AppCompatActivity {
     public class MyViewHolder extends RecyclerView.ViewHolder{
         View mView;
         public ImageView imageView;
-        public TextView notes;
+        public TextView notes, date;
 
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
             mView = itemView;
             imageView = itemView.findViewById(R.id.imageView);
             notes = itemView.findViewById(R.id.note);
+            date = itemView.findViewById(R.id.date);
         }
 
         public void setItemName(String itemName){
+
             TextView item = mView.findViewById(R.id.item);
+            item.setText(itemName);
         }
 
         public void setItemAmount(String itemAmount){
@@ -242,7 +261,82 @@ public class Budget extends AppCompatActivity {
         }
 
         public void setDate(String itemDate){
+
             TextView date = mView.findViewById(R.id.date);
+            date.setText(itemDate);
         }
+    }
+
+    private void updateData(){
+        AlertDialog.Builder myDialog = new AlertDialog.Builder(this);
+        LayoutInflater inflater = LayoutInflater.from(this);
+        View mView = inflater.inflate(R.layout.update_layout, null);
+
+        myDialog.setView(mView);
+        final AlertDialog dialog = myDialog.create();
+
+        final TextView mItem = mView.findViewById(R.id.itemName);
+        final EditText mAmount = mView.findViewById(R.id.amount);
+        final EditText mNotes = mView.findViewById(R.id.note);
+
+        mNotes.setVisibility(View.GONE);
+
+        mItem.setText(item);
+
+        mAmount.setText(String.valueOf(amount));
+        mAmount.setSelection(String.valueOf(amount).length());
+
+        Button delButton = mView.findViewById(R.id.itemDelete);
+        Button updateBtn = mView.findViewById(R.id.itemUpdate);
+
+        updateBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                amount = Integer.parseInt(mAmount.getText().toString());
+
+                DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+                Calendar cal = Calendar.getInstance();
+                String date = dateFormat.format(cal.getTime());
+
+                MutableDateTime epoch = new MutableDateTime();
+                epoch.setDate(0);
+                DateTime now = new DateTime();
+                Months months = Months.monthsBetween(epoch, now);
+
+                Data data = new Data(item, date, post_key, null, amount, months.getMonths());
+                budgetRef.child(post_key).setValue(data).addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if(task.isSuccessful()){
+                            Toast.makeText(Budget.this, "Updated Successfully", Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(Budget.this, task.getException().toString(), Toast.LENGTH_SHORT).show();
+                        }
+
+                    }
+                });
+                dialog.dismiss();
+            }
+        });
+
+        delButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                budgetRef.child(post_key).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if(task.isSuccessful()){
+                            Toast.makeText(Budget.this, "Deleted Successfully", Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(Budget.this, task.getException().toString(), Toast.LENGTH_SHORT).show();
+                        }
+
+                    }
+                });
+                dialog.dismiss();
+            }
+        });
+
+        dialog.show();
     }
 }

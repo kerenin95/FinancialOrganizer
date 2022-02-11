@@ -3,19 +3,28 @@ package com.example.financialorganizer;
 public class Data {
 
     String item, date, id, notes;
-    int amount, month;
+    int amount, month, week;
 
     public Data(){
 
     }
 
-    public Data(String item, String date, String id, String notes, int amount, int month){
+    public Data(String item, String date, String id, String notes, int amount, int month, int week) {
         this.item = item;
         this.date = date;
         this.id = id;
         this.notes = notes;
         this.amount = amount;
         this.month = month;
+        this.week = week;
+    }
+
+    public String getItem() {
+        return item;
+    }
+
+    public void setItem(String item) {
+        this.item = item;
     }
 
     public String getDate() {
@@ -58,12 +67,11 @@ public class Data {
         this.month = month;
     }
 
-    public String getItem(){
-        return item;
+    public int getWeek() {
+        return week;
     }
 
-    public void setItem(){
-        this.item = item;
+    public void setWeek(int week) {
+        this.week = week;
     }
-
 }

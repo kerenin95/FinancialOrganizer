@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -41,7 +42,7 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
 
-public class todaysSpending extends AppCompatActivity {
+public class TodaysSpending extends AppCompatActivity {
 
     private Toolbar toolbar;
     private TextView totalAmountSpentOn;
@@ -55,7 +56,7 @@ public class todaysSpending extends AppCompatActivity {
     private DatabaseReference expensesRef;
 
     private ItemAdapterToday itemAdapterToday;
-    private List<Data> myListData;
+    private List<Data> myDataList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,26 +69,26 @@ public class todaysSpending extends AppCompatActivity {
 
         totalAmountSpentOn = findViewById(R.id.totalAmountSpentOn);
         progressBar = findViewById(R.id.progressBar);
-        recyclerView = findViewById(R.id.recyclerView);
-
-        myListData = new ArrayList<>();
-        itemAdapterToday = new ItemAdapterToday(todaysSpending.this, myListData);
-        recyclerView.setAdapter(itemAdapterToday);
-
-        readItems();
 
         fab = findViewById(R.id.fab);
         loader = new ProgressDialog(this);
 
+        mAuth = FirebaseAuth.getInstance();
+        onlineUserId = mAuth.getCurrentUser().getUid();
+        expensesRef = FirebaseDatabase.getInstance().getReference("expenses").child(onlineUserId);
+
+        recyclerView = findViewById(R.id.recyclerView);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         linearLayoutManager.setStackFromEnd(true);
         linearLayoutManager.setReverseLayout(true);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(linearLayoutManager);
 
-        mAuth = FirebaseAuth.getInstance();
-        onlineUserId = mAuth.getCurrentUser().getUid();
-        expensesRef = FirebaseDatabase.getInstance().getReference("expenses").child(onlineUserId);
+        myDataList = new ArrayList<>();
+        itemAdapterToday = new ItemAdapterToday(TodaysSpending.this, myDataList);
+        recyclerView.setAdapter(itemAdapterToday);
+
+        readItems();
 
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -95,46 +96,50 @@ public class todaysSpending extends AppCompatActivity {
                 addItemSpentOn();
             }
         });
-
-
     }
 
     private void readItems() {
-        DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
-        Calendar cal = Calendar.getInstance();
-        String date = dateFormat.format(cal.getTime());
+        try {
+            DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+            Calendar cal = Calendar.getInstance();
+            String date = dateFormat.format(cal.getTime());
 
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("expenses").child(onlineUserId);
-        Query query = reference.orderByChild("date").equalTo(date);
-        query.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                myListData.clear();
-                for(DataSnapshot dataSnapshot : snapshot.getChildren()){
-                    Data data = snapshot.getValue(Data.class);
-                    myListData.add(data);
+            DatabaseReference reference = FirebaseDatabase.getInstance().getReference("expenses").child(onlineUserId);
+            Query query = reference.orderByChild("date").equalTo(date);
+            query.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    myDataList.clear();
+                    for(DataSnapshot dataSnapshot : snapshot.getChildren()){
+                        Data data = dataSnapshot.getValue(Data.class);
+                        myDataList.add(data);
+                    }
+
+                    itemAdapterToday.notifyDataSetChanged();
+                    progressBar.setVisibility(View.GONE);
+
+                    int totalAmount = 0;
+                    for(DataSnapshot ds: snapshot.getChildren()){
+                        Map<String, Object> map = (Map<String, Object>)ds.getValue();
+                        Object total = map.get("amount");
+                        int pTotal = Integer.parseInt(String.valueOf(total));
+                        totalAmount += pTotal;
+
+                        totalAmountSpentOn.setText("Total Day's Spending $:" + totalAmount);
+                    }
+
                 }
 
-                itemAdapterToday.notifyDataSetChanged();
-                progressBar.setVisibility(View.GONE);
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
 
-                int totalAmount = 0;
-                for(DataSnapshot ds: snapshot.getChildren()){
-                    Map<String, Object> map = (Map<String, Object>)ds.getValue();
-                    Object total = map.get("amount");
-                    int pTotal = Integer.parseInt(String.valueOf(total));
-                    totalAmount += pTotal;
-
-                    totalAmountSpentOn.setText("Total Day's Spending $:" + totalAmount);
                 }
+            });
+        }
+        catch (Exception e) {
+            Log.d( "Error: ", String.valueOf(e));
+        }
 
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });
     }
 
     private void addItemSpentOn() {
@@ -167,7 +172,7 @@ public class todaysSpending extends AppCompatActivity {
                 }
 
                 if(Item.equals("Select item")){
-                    Toast.makeText(todaysSpending.this, "Select a valid item", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(TodaysSpending.this, "Select a valid item", Toast.LENGTH_SHORT).show();
                 }
 
                 if(TextUtils.isEmpty(notes)){
@@ -193,9 +198,9 @@ public class todaysSpending extends AppCompatActivity {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
                             if(task.isSuccessful()){
-                                Toast.makeText(todaysSpending.this, "Budget item added", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(TodaysSpending.this, "Budget item added", Toast.LENGTH_SHORT).show();
                             } else {
-                                Toast.makeText(todaysSpending.this, task.getException().toString(), Toast.LENGTH_SHORT).show();
+                                Toast.makeText(TodaysSpending.this, task.getException().toString(), Toast.LENGTH_SHORT).show();
                             }
 
                             loader.dismiss();

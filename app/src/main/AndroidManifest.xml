@@ -10,7 +10,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.FinancialOrganizer">
         <activity
-            android:name=".todaysSpending"
+            android:name=".TodaysSpending"
             android:exported="false" />
         <activity
             android:name=".Budget"

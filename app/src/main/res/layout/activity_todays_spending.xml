@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".todaysSpending">
+    tools:context=".TodaysSpending">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -27,7 +27,7 @@
             android:id="@+id/totalAmountSpentOn"
             android:textColor="#1b1b1e"
             android:textSize="20sp"
-            android:text="TotalAmount: $0"
+            android:text="Total Amount: $0"
             android:textStyle="bold"
             android:gravity="center"
             android:layout_margin="5dp"/>

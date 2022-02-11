@@ -41,9 +41,9 @@ public class ItemAdapterToday extends RecyclerView.Adapter<ItemAdapterToday.View
         final Data data = myDataList.get(position);
 
         holder.item.setText("Item: " + data.getItem());
-        holder.amount.setText("Amount: " + data.getItem());
-        holder.date.setText("On: " + data.getItem());
-        holder.notes.setText("Note: " + data.getItem());
+        holder.amount.setText("Amount: " + data.getAmount());
+        holder.date.setText("On: " + data.getDate());
+        holder.note.setText("Note: " + data.getNotes());
 
         switch (data.getItem()){
             case "Transportation":
@@ -74,7 +74,7 @@ public class ItemAdapterToday extends RecyclerView.Adapter<ItemAdapterToday.View
 
     public class ViewHolder extends RecyclerView.ViewHolder{
 
-        public TextView item, amount, date, notes;
+        public TextView item, amount, date, note;
         public ImageView imageView;
 
         public ViewHolder(@NonNull View itemView){
@@ -83,7 +83,7 @@ public class ItemAdapterToday extends RecyclerView.Adapter<ItemAdapterToday.View
             item = itemView.findViewById(R.id.item);
             amount = itemView.findViewById(R.id.amount);
             date = itemView.findViewById(R.id.date);
-            notes = itemView.findViewById(R.id.note);
+            note = itemView.findViewById(R.id.note);
             imageView = itemView.findViewById(R.id.imageView);
         }
     }

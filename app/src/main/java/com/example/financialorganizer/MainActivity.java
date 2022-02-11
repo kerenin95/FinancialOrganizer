@@ -30,7 +30,7 @@ public class MainActivity extends AppCompatActivity {
         todaysCardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(MainActivity.this, todaysSpending.class);
+                Intent intent = new Intent(MainActivity.this, TodaysSpending.class);
                 startActivity(intent);
             }
         });

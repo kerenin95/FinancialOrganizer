@@ -10,6 +10,27 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.FinancialOrganizer">
         <activity
+            android:name=".ActivityMonthlyAnalytics"
+            android:exported="false" />
+        <activity
+            android:name=".ActivityWeeklyAnalytics"
+            android:exported="false" />
+        <activity
+            android:name=".DailyAnalyticsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".AnalyticsChoiceActivity"
+            android:exported="false" />
+        <activity
+            android:name=".WeeklySpendingActivity"
+            android:exported="false" />
+        <activity
+            android:name=".TodaysSpending"
+            android:exported="false" />
+        <activity
+            android:name=".Budget"
+            android:exported="false" />
+        <activity
             android:name=".MainActivity"
             android:exported="false" />
         <activity

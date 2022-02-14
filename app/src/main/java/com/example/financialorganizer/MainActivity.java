@@ -11,17 +11,27 @@ import android.widget.ImageView;
 public class MainActivity extends AppCompatActivity {
 
     private ImageView weeklyBtnImageView, dailyBtnImageView, budgetBtnImageView, monthlyBtnImageView, analyticsBtnImageView;
+    private CardView dayCardView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        dayCardView = findViewById(R.id.dayCardView);
+
         weeklyBtnImageView = findViewById(R.id.weeklyBtnImageView);
         dailyBtnImageView = findViewById(R.id.dailyBtnImageView);
         budgetBtnImageView = findViewById(R.id.budgetBtnImageView);
         monthlyBtnImageView = findViewById(R.id.monthlyBtnImageView);
         analyticsBtnImageView = findViewById(R.id.analyticsBtnImageView);
+
+        dayCardView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(MainActivity.this, TodaysSpending.class);
+            }
+        });
 
 
         budgetBtnImageView.setOnClickListener(new View.OnClickListener() {

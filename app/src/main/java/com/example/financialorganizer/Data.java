@@ -10,7 +10,7 @@ public class Data {
 
     }
 
-    public Data(String item, String date, String id, String itemNDay, String itemNWeek, String itemNMonth, int amount, int month, int week, String notes) {
+    public Data(String item, String date, String id, String itemNDay, String itemNWeek, String itemNMonth, int amount, int week, int month, String notes) {
         this.item = item;
         this.date = date;
         this.id = id;
@@ -18,8 +18,8 @@ public class Data {
         this.itemNWeek = itemNWeek;
         this.itemNMonth = itemNMonth;
         this.amount = amount;
-        this.month = month;
         this.week = week;
+        this.month = month;
         this.notes = notes;
     }
 

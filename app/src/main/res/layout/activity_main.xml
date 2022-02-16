@@ -25,6 +25,7 @@
 
         <TableRow>
             <TextView
+                android:id="@+id/budgetSpending"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -36,6 +37,7 @@
                 android:gravity="center"/>
 
             <TextView
+                android:id="@+id/dailySpending"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -47,6 +49,7 @@
                 android:gravity="center"/>
 
             <TextView
+                android:id="@+id/weeklySpending"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -58,6 +61,7 @@
                 android:gravity="center"/>
 
             <TextView
+                android:id="@+id/monthlySpending"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -69,6 +73,7 @@
                 android:gravity="center"/>
 
             <TextView
+                android:id="@+id/remainingBudgetSpending"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"

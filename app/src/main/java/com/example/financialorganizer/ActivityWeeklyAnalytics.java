@@ -122,7 +122,7 @@ public class ActivityWeeklyAnalytics extends AppCompatActivity {
                         setStatusAndImageResource();
                     }
                 },
-                4000
+                2000
         );
     }
     private void getTotalWeeklyTransportationExpenses() {

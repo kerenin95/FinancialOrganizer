@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -46,12 +47,12 @@ public class DailyAnalyticsActivity extends AppCompatActivity {
 
     private TextView totalAmountSpentOn, analyticsTransportationAmount, analyticsFoodAmount, analyticsRentAmount;
     private TextView analyticsEntertainmentAmount, analyticsHealthAmount, analyticsOtherAmount, monthSpentAmount;
-    private TextView progress_ratio_transport, progress_ratio_food, progress_ratio_house, progress_ratio_ent, progress_ratio_hea, progress_ratio_oth, monthRatioSpending;
 
     private RelativeLayout relativeLayoutTransport, relativeLayoutFood, relativeLayoutRent, relativeLayoutEntertainment;
     private RelativeLayout relativeLayoutHealth, relativeLayoutOther, linearLayoutAnalysis;
 
     private AnyChartView anyChartView;
+    private TextView progress_ratio_transport, progress_ratio_food, progress_ratio_house, progress_ratio_ent, progress_ratio_hea, progress_ratio_oth, monthRatioSpending;
     private ImageView transportation_status, food_status, rent_status, entertainment_status, health_status, other_status, monthRatioSpending_Image;
 
     @Override
@@ -130,12 +131,11 @@ public class DailyAnalyticsActivity extends AppCompatActivity {
     private void getTotalWeeklyTransportationExpenses() {
         MutableDateTime epoch = new MutableDateTime();
         epoch.setDate(0); //Set to Epoch time
-        DateTime now = new DateTime();
 
         DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
         Calendar cal = Calendar.getInstance();
         String date = dateFormat.format(cal.getTime());
-        String itemNday = "Transport"+date;
+        String itemNday = "Transportation"+date;
 
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("expenses").child(onlineUserId);
         Query query = reference.orderByChild("itemNday").equalTo(itemNday);
@@ -156,6 +156,7 @@ public class DailyAnalyticsActivity extends AppCompatActivity {
                 }
                 else {
                     relativeLayoutTransport.setVisibility(View.GONE);
+                    personalRef.child("dayTrans").setValue(0);
                 }
 
             }
@@ -193,6 +194,7 @@ public class DailyAnalyticsActivity extends AppCompatActivity {
                     personalRef.child("dayFood").setValue(totalAmount);
                 }else {
                     relativeLayoutFood.setVisibility(View.GONE);
+                    personalRef.child("dayFood").setValue(0);
                 }
 
             }
@@ -210,7 +212,7 @@ public class DailyAnalyticsActivity extends AppCompatActivity {
         DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
         Calendar cal = Calendar.getInstance();
         String date = dateFormat.format(cal.getTime());
-        String itemNday = "House Expenses"+date;
+        String itemNday = "Rent"+date;
 
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("expenses").child(onlineUserId);
         Query query = reference.orderByChild("itemNday").equalTo(itemNday);
@@ -229,6 +231,7 @@ public class DailyAnalyticsActivity extends AppCompatActivity {
                     personalRef.child("dayHouse").setValue(totalAmount);
                 }else {
                     relativeLayoutRent.setVisibility(View.GONE);
+                    personalRef.child("dayHouse").setValue(0);
                 }
 
             }
@@ -265,6 +268,7 @@ public class DailyAnalyticsActivity extends AppCompatActivity {
                     personalRef.child("dayEnt").setValue(totalAmount);
                 }else {
                     relativeLayoutEntertainment.setVisibility(View.GONE);
+                    personalRef.child("dayEnt").setValue(0);
                 }
 
             }
@@ -286,9 +290,11 @@ public class DailyAnalyticsActivity extends AppCompatActivity {
 
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("expenses").child(onlineUserId);
         Query query = reference.orderByChild("itemNday").equalTo(itemNday);
+        Log.d("query", String.valueOf(query));
         query.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
+                Log.d("Snapshot", String.valueOf(snapshot.exists()));
                 if (snapshot.exists()){
                     int totalAmount = 0;
                     for (DataSnapshot ds :  snapshot.getChildren()) {
@@ -301,6 +307,7 @@ public class DailyAnalyticsActivity extends AppCompatActivity {
                     personalRef.child("dayHea").setValue(totalAmount);
                 }else {
                     relativeLayoutHealth.setVisibility(View.GONE);
+                    personalRef.child("dayHea").setValue(0);
                 }
 
             }
@@ -337,6 +344,7 @@ public class DailyAnalyticsActivity extends AppCompatActivity {
                     personalRef.child("dayOther").setValue(totalAmount);
                 }else {
                     relativeLayoutOther.setVisibility(View.GONE);
+                    personalRef.child("dayOther").setValue(0);
                 }
 
             }
@@ -370,7 +378,7 @@ public class DailyAnalyticsActivity extends AppCompatActivity {
                     monthSpentAmount.setText("Total Spent: $ "+totalAmount);
                 }
                 else {
-                    totalAmountSpentOn.setText("You've not spent today");
+                    totalAmountSpentOn.setText("You've not spent anything today!");
                     anyChartView.setVisibility(View.GONE);
                 }
             }
@@ -381,13 +389,11 @@ public class DailyAnalyticsActivity extends AppCompatActivity {
             }
         });
     }
-
     private void loadGraph(){
         personalRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (snapshot.exists()){
-
                     int traTotal;
                     if (snapshot.hasChild("dayTrans")){
                         traTotal = Integer.parseInt(snapshot.child("dayTrans").getValue().toString());
@@ -438,7 +444,6 @@ public class DailyAnalyticsActivity extends AppCompatActivity {
                     data.add(new ValueDataEntry("Entertainment", entTotal));
                     data.add(new ValueDataEntry("Health", heaTotal));
                     data.add(new ValueDataEntry("other", othTotal));
-
 
                     pie.data(data);
 

@@ -225,7 +225,7 @@ public class Budget extends AppCompatActivity {
                     case "Food":
                         holder.imageView.setImageResource(R.drawable.budget);
                         break;
-                    case "House/Rent":
+                    case "Rent":
                         holder.imageView.setImageResource(R.drawable.budget);
                         break;
                     case "Entertainment":
@@ -288,7 +288,6 @@ public class Budget extends AppCompatActivity {
         }
 
         public void setDate(String itemDate){
-
             TextView date = mView.findViewById(R.id.date);
             date.setText(itemDate);
         }

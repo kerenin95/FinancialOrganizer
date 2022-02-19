@@ -41,6 +41,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 public class TodaysSpending extends AppCompatActivity {
@@ -185,7 +186,7 @@ public class TodaysSpending extends AppCompatActivity {
                     loader.show();
 
                     String id = expensesRef.push().getKey();
-                    DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+                    DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH);
                     Calendar cal = Calendar.getInstance();
                     String date = dateFormat.format(cal.getTime());
 
